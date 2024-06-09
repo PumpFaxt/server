@@ -1,7 +1,8 @@
 import "dotenv/config";
 
-import express from "express";
 import cors from "cors";
+import express from "express";
+import mongoose from "mongoose";
 import indexRouter from "./src/routes/_index";
 
 import { frontendUrl } from "./config";
@@ -16,6 +17,12 @@ app.use(express.urlencoded());
 
 app.use("/", indexRouter);
 
-app.listen(PORT, () => {
-  console.log(`server listening on port ${PORT}`);
-});
+async function main() {
+  if (!process.env.MONGODB_URI) throw new Error("Connection URI missing");
+  await mongoose.connect(process.env.MONGODB_URI);
+  app.listen(PORT, () => {
+    console.log(`server listening on port ${PORT}`);
+  });
+}
+
+main();
