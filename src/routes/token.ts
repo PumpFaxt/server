@@ -23,6 +23,10 @@ router.post("/enqueue", authorisedOnly, async (req, res) => {
     twitter,
   });
 
+  if ((user?.queue?.length || 0) > 5) {
+    await User.findOneAndUpdate({ address: creator }, { $pop: { tokens: -1 } });
+  }
+
   await user?.save();
 
   return res.status(200).send({ success: true });
