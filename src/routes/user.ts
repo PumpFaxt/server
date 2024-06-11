@@ -37,9 +37,13 @@ router.post("/login", unauthorisedOnly, (req, res) => {
 
   if (recoveredAddress != address) return res.status(401).send("Forbidden");
 
-  const accessToken = jwt.sign(address, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "20h",
-  });
+  const accessToken = jwt.sign(
+    { address: address },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: "20h",
+    }
+  );
 
   return res.status(200).send({ token: accessToken });
 });

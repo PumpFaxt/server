@@ -11,7 +11,7 @@ const PORT = Number(process.env.PORT) || 9000;
 
 const app = express();
 
-app.use(cors({ origin: frontendUrl }));
+app.use(cors({  }));
 app.use(express.json());
 app.use(express.urlencoded());
 
