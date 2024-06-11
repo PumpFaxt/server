@@ -10,6 +10,8 @@ export function authorisedOnly(
 ) {
   const token = getAuthTokenFromHeader(req);
 
+  if (!process.env.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
+
   if (!token) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
@@ -29,6 +31,8 @@ export function unauthorisedOnly(
   next: NextFunction
 ) {
   const token = getAuthTokenFromHeader(req);
+
+  if (!process.env.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
 
   if (!token) return next();
 
