@@ -7,7 +7,6 @@ interface User {
 interface Token {
   address: string;
   creator: string;
-  creator_nickname?: string;
   name: string;
   symbol: string;
   image: string;

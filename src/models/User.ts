@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { Token } from "../types/custom";
 
-const tokenSchema = new Schema<Token>({
+const userSchema = new Schema<Token>({
   address: { type: String, unique: true },
   creator: { type: String },
   name: { type: String },
@@ -12,6 +12,4 @@ const tokenSchema = new Schema<Token>({
   twitter: { type: String },
 });
 
-tokenSchema.index({ creator: 1, symbol: 1 }, { unique: true });
-
-export default model<Token>("Token", tokenSchema);
+export default model<Token>("Token", userSchema);
