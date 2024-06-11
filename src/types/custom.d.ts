@@ -5,6 +5,7 @@ interface User {
   nickname: string;
   image: string;
   queue: Partial<Token>[];
+  lastTokensBlock: number;
 }
 
 interface Token {
