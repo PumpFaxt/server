@@ -5,7 +5,6 @@ import express from "express";
 import { verifySignature } from "../utils/utils";
 import { unauthorisedOnly } from "../middleware/auth";
 import User from "../models/User";
-import evm from "../../evm";
 const router = express.Router();
 
 const nonceStorage: Record<string, string> = {};
@@ -39,15 +38,9 @@ router.post("/login", unauthorisedOnly, async (req, res) => {
 
   if (recoveredAddress != address) return res.status(401).send("Forbidden");
 
-  const currentBlockNumber = await evm.getBlockNumber();
-
   const user = await User.findOne({ address: recoveredAddress });
   if (!user) {
-    const newUser = await User.create({
-      address: recoveredAddress,
-      lastTokensBlock: currentBlockNumber,
-      queue: [],
-    });
+    const newUser = await User.create({ address: recoveredAddress });
     await newUser.save();
   }
 

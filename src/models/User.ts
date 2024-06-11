@@ -3,7 +3,7 @@ import { User } from "../types/custom";
 
 const userSchema = new Schema<User>({
   address: { type: String, unique: true },
-  nickname: { type: String, unique: true },
+  nickname: { type: String },
   image: { type: String },
   queue: { default: [], type: [Object] },
   lastTokensBlock: { type: Number, default: 0 },

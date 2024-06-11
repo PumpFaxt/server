@@ -10,11 +10,15 @@ export function authorisedOnly(
 ) {
   const token = getAuthTokenFromHeader(req);
 
+  console.log(token);
+
   if (!process.env.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
 
   if (!token) return res.sendStatus(401);
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    console.log(err, user);
+
     if (err) return res.status(200).send({ invalidToken: true });
 
     req.user = user as { address: string };
