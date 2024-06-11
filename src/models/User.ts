@@ -1,15 +1,10 @@
 import { Schema, model } from "mongoose";
-import { Token } from "../types/custom";
+import { User } from "../types/custom";
 
-const userSchema = new Schema<Token>({
+const userSchema = new Schema<User>({
   address: { type: String, unique: true },
-  creator: { type: String },
-  name: { type: String },
+  nickname: { type: String, unique: true },
   image: { type: String },
-  symbol: { type: String },
-  website: { type: String },
-  telegram: { type: String },
-  twitter: { type: String },
 });
 
-export default model<Token>("Token", userSchema);
+export default model<User>("User", userSchema);

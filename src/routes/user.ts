@@ -1,6 +1,8 @@
 import { isAddress } from "ethers";
+import jwt from "jsonwebtoken";
 
 import express from "express";
+import { verifySignature } from "../utils/utils";
 const router = express.Router();
 
 const nonceStorage: Record<string, string> = {};
@@ -16,7 +18,29 @@ router.post("/request-nonce", (req, res) => {
     address.toString()
   ] = `I am ${address}; log me in to pumpfaxt.it; nonce : ${nonce}`;
 
-  res.status(200).send({ message: nonceStorage[address.toString()] });
+  return res.status(200).send({ message: nonceStorage[address.toString()] });
+});
+
+router.post("/login", (req, res) => {
+  const { address, signature } = req.query;
+
+  if (!process.env.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
+
+  if (!address || !isAddress(address) || !signature)
+    return res.status(400).send("Invalid address or signature");
+
+  const recoveredAddress = verifySignature(
+    nonceStorage[address.toString()],
+    signature.toString()
+  );
+
+  if (recoveredAddress != address) return res.status(401).send("Forbidden");
+
+  const accessToken = jwt.sign(address, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "20h",
+  });
+
+  return res.status(200).send({ token: accessToken });
 });
 
 export default router;

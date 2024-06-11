@@ -2,6 +2,8 @@ import "node";
 
 interface User {
   address: string;
+  nickname: string;
+  image: string;
 }
 
 interface Token {
