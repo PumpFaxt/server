@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import express from "express";
 import { verifySignature } from "../utils/utils";
 import { unauthorisedOnly } from "../middleware/auth";
+import User from "../models/User";
 const router = express.Router();
 
 const nonceStorage: Record<string, string> = {};
@@ -22,7 +23,7 @@ router.post("/request-nonce", unauthorisedOnly, (req, res) => {
   return res.status(200).send({ message: nonceStorage[address.toString()] });
 });
 
-router.post("/login", unauthorisedOnly, (req, res) => {
+router.post("/login", unauthorisedOnly, async (req, res) => {
   const { address, signature } = req.query;
 
   if (!process.env.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
@@ -36,6 +37,12 @@ router.post("/login", unauthorisedOnly, (req, res) => {
   );
 
   if (recoveredAddress != address) return res.status(401).send("Forbidden");
+
+  const user = await User.findOne({ address: recoveredAddress });
+  if (!user) {
+    const newUser = await User.create({ address: recoveredAddress });
+    await newUser.save();
+  }
 
   const accessToken = jwt.sign(
     { address: address },
