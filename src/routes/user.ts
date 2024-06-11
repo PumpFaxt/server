@@ -3,11 +3,12 @@ import jwt from "jsonwebtoken";
 
 import express from "express";
 import { verifySignature } from "../utils/utils";
+import { unauthorisedOnly } from "../middleware/auth";
 const router = express.Router();
 
 const nonceStorage: Record<string, string> = {};
 
-router.post("/request-nonce", (req, res) => {
+router.post("/request-nonce", unauthorisedOnly, (req, res) => {
   const { address } = req.query;
   if (!address || !isAddress(address))
     return res.status(400).send("Missing or invalid address");
@@ -21,7 +22,7 @@ router.post("/request-nonce", (req, res) => {
   return res.status(200).send({ message: nonceStorage[address.toString()] });
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", unauthorisedOnly, (req, res) => {
   const { address, signature } = req.query;
 
   if (!process.env.ACCESS_TOKEN_SECRET) return res.sendStatus(500);

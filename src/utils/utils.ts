@@ -8,3 +8,10 @@ export function verifySignature(message: string, signature: string) {
 
   return recovered;
 }
+
+export function getAuthTokenFromHeader(req: any): string | false {
+  const authHeader = (req.headers as any).authorization;
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return false;
+  return token;
+}
