@@ -17,7 +17,7 @@ export function authorisedOnly(
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) return res.status(200).send({ invalidToken: true });
 
-    req.user = user as User;
+    req.user = user as { address: string };
 
     if (!req.user) return res.status(200).send({ invalidToken: true });
 
