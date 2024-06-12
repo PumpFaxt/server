@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 import express from "express";
 import { verifySignature } from "../utils/utils";
-import { unauthorisedOnly } from "../middleware/auth";
+import { authorisedOnly, unauthorisedOnly } from "../middleware/auth";
 import User from "../models/User";
 const router = express.Router();
 
@@ -53,6 +53,10 @@ router.post("/login", unauthorisedOnly, async (req, res) => {
   );
 
   return res.status(200).send({ token: accessToken });
+});
+
+router.get("/verify-token", authorisedOnly, (req, res) => {
+  res.status(200).send({ invalidToken: false });
 });
 
 export default router;

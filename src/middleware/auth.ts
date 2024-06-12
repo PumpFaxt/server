@@ -1,7 +1,7 @@
 import { Express, Request, Response, NextFunction } from "express";
 import { getAuthTokenFromHeader } from "../utils";
 import jwt from "jsonwebtoken";
-import { User } from "../types/custom";
+import User from "../models/User";
 
 export function authorisedOnly(
   req: Request,
@@ -10,18 +10,18 @@ export function authorisedOnly(
 ) {
   const token = getAuthTokenFromHeader(req);
 
-  console.log(token);
-
   if (!process.env.ACCESS_TOKEN_SECRET) return res.sendStatus(500);
 
   if (!token) return res.sendStatus(401);
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    console.log(err, user);
-
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user: any) => {
     if (err) return res.status(200).send({ invalidToken: true });
 
-    req.user = user as { address: string };
+    const dbUser = await User.findOne({ address: (user as any).address });
+
+    if (!dbUser) return res.status(200).send({ invalidToken: true });
+
+    req.user = dbUser;
 
     if (!req.user) return res.status(200).send({ invalidToken: true });
 

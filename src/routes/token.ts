@@ -44,7 +44,7 @@ router.post("/new", authorisedOnly, async (req, res) => {
     "latest"
   );
 
-  tokens.forEach((token) => console.log(token));
+  tokens.forEach((token) => console.log(token.data));
 });
 
 export default router;
