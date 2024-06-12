@@ -56,7 +56,7 @@ router.post("/login", unauthorisedOnly, async (req, res) => {
 });
 
 router.get("/verify-token", authorisedOnly, (req, res) => {
-  res.status(200).send({ invalidToken: false });
+  res.status(200).send({ invalidToken: false, user: req.user });
 });
 
 export default router;
