@@ -1,10 +1,13 @@
 import express from "express";
 import exampleRouter from "./example";
 import tokenRouter from "./token";
+import huddleRouter from "./huddle";
+
 const router = express.Router();
 
 router.use("/example", exampleRouter);
 router.use("/token", tokenRouter);
+router.use("/huddle", huddleRouter);
 
 router.get("/", (req, res) => {
   res.send(
