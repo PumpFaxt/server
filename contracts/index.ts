@@ -1,6 +1,7 @@
 import frax from "./frax";
-import pumpItFaxt from "./pumpItFaxt";
+import pumpItFaxtInterface from "./pumpItFaxtInterface";
+import token from "./token";
 
-const contracts = { frax, pumpItFaxt };
+const contracts = { frax, pumpItFaxtInterface, token };
 
 export default contracts;

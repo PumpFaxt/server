@@ -5,6 +5,7 @@ const tokenSchema = new Schema<Token>({
   address: { type: String, unique: true },
   creator: { type: String },
   name: { type: String },
+  description: { type: String },
   image: { type: String },
   symbol: { type: String },
   website: { type: String },

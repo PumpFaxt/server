@@ -19,3 +19,7 @@ interface Token {
   telegram: string;
   twitter: string;
 }
+
+interface Config {
+  tokensLastBlock: bigint;
+}
