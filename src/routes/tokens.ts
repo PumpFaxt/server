@@ -33,6 +33,8 @@ router.post("/refresh", async (req, res) => {
 
       const metadata = JSON.parse(await token.read.metadata());
 
+      await Token.deleteOne({ address: token.address });
+
       const newToken = await Token.create({
         address: token.address,
         creator: await token.read.creator(),
@@ -45,6 +47,8 @@ router.post("/refresh", async (req, res) => {
         twitter: metadata.twitter,
         website: metadata.website,
       });
+
+      await PriceFeed.deleteOne({ address: token.address });
 
       const priceFeed = await PriceFeed.create({
         address: token.address,
