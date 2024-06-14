@@ -108,7 +108,7 @@ router.get("/:address", async (req, res) => {
     const { address } = req.params;
     if (typeof address != "string") return res.sendStatus(400);
 
-    const token = await Token.find({ address: address });
+    const token = await Token.findOne({ address: address });
 
     if (!token) return res.sendStatus(404);
 
