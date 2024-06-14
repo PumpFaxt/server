@@ -37,7 +37,7 @@ router.post("/refresh", async (req, res) => {
         address: token.address,
         creator: await token.read.creator(),
         name: await token.read.name(),
-        totalSupply: await token.read.totalSupply(),
+        totalSupply: Number((await token.read.totalSupply()) / evm.ONE_TOKEN),
         symbol: await token.read.symbol(),
         image: await token.read.image(),
         description: metadata.description,
@@ -48,7 +48,7 @@ router.post("/refresh", async (req, res) => {
 
       const priceFeed = await PriceFeed.create({
         address: token.address,
-        lastRefreshedBlock: evm.getBlockNumber(),
+        lastRefreshedBlock: await evm.getBlockNumber(),
         data: [],
       });
 
@@ -70,6 +70,52 @@ router.post("/refresh", async (req, res) => {
     console.error(err);
 
     return res.sendStatus(500);
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    const page =
+      (typeof req.query.page == "string" && parseInt(req.query.page)) || 1;
+    const limit =
+      (typeof req.query.limit == "string" && parseInt(req.query.limit)) || 10;
+
+    const startIndex = (page - 1) * limit;
+
+    const response = {
+      total: 0,
+      tokens: [],
+    };
+
+    const total = await Token.countDocuments();
+
+    response.total = total;
+
+    response.tokens = await Token.find(
+      {},
+      {},
+      { limit: limit, skip: startIndex }
+    );
+    res.status(200).send(response);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err });
+  }
+});
+
+router.get("/:address", async (req, res) => {
+  try {
+    const { address } = req.params;
+    if (typeof address != "string") return res.sendStatus(400);
+
+    const token = await Token.find({ address: address });
+
+    if (!token) return res.sendStatus(404);
+
+    return res.status(200).send({ token: token });
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
   }
 });
 

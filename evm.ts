@@ -33,6 +33,7 @@ async function getBlockNumber() {
   return await client.getBlockNumber();
 }
 
-const ONE_FRAX = Math.pow(10, 18);
+const ONE_FRAX = BigInt(Math.pow(10, 18));
+const ONE_TOKEN = BigInt(Math.pow(10, 18));
 
-export default { client, pumpItFaxt, getBlockNumber, ONE_FRAX };
+export default { client, pumpItFaxt, getBlockNumber, ONE_FRAX, ONE_TOKEN };
