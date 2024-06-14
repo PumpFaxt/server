@@ -33,4 +33,6 @@ async function getBlockNumber() {
   return await client.getBlockNumber();
 }
 
-export default { client, pumpItFaxt, getBlockNumber };
+const ONE_FRAX = Math.pow(10, 18);
+
+export default { client, pumpItFaxt, getBlockNumber, ONE_FRAX };

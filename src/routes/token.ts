@@ -3,7 +3,9 @@ import evm from "../../evm";
 import Config from "../models/Config";
 import contracts from "../../contracts";
 import Token from "../models/Token";
-import { getContract } from "viem";
+import { getContract, isAddress } from "viem";
+import { watchAllTrades } from "../hooks";
+import PriceFeed from "../models/PriceFeed";
 const router = express.Router();
 
 router.post("/refresh", async (req, res) => {
@@ -35,6 +37,7 @@ router.post("/refresh", async (req, res) => {
         address: token.address,
         creator: await token.read.creator(),
         name: await token.read.name(),
+        totalSupply: await token.read.totalSupply(),
         symbol: await token.read.symbol(),
         image: await token.read.image(),
         description: metadata.description,
@@ -43,6 +46,13 @@ router.post("/refresh", async (req, res) => {
         website: metadata.website,
       });
 
+      const priceFeed = await PriceFeed.create({
+        address: token.address,
+        lastRefreshedBlock: evm.getBlockNumber(),
+        data: [],
+      });
+
+      await priceFeed.save();
       await newToken.save();
     });
 
@@ -61,6 +71,17 @@ router.post("/refresh", async (req, res) => {
 
     return res.sendStatus(500);
   }
+});
+
+router.get("/:address/feed", async (req, res) => {
+  const { address } = req.params;
+
+  if (!isAddress(address)) return res.sendStatus(400);
+  watchAllTrades(address);
+
+  const feed = await PriceFeed.findOneAndUpdate({ address: address });
+
+  return res.status(200).send({ data: feed });
 });
 
 export default router;
