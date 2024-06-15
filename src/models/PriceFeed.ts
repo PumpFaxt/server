@@ -7,6 +7,4 @@ const priceFeedSchema = new Schema<PriceFeed>({
   lastRefreshedBlock: { type: BigInt },
 });
 
-priceFeedSchema.index({ creator: 1, symbol: 1 }, { unique: true });
-
 export default model<PriceFeed>("PriceFeed", priceFeedSchema);

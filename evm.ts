@@ -10,7 +10,7 @@ import {
 } from "viem";
 import { hardhat } from "viem/chains";
 
-const rpcUrl = "http://127.0.0.1:8545/";
+const rpcUrl = "https://rpc.testnet.frax.com/";
 const pvtKey = crypto.randomBytes(32).toString("hex");
 
 const publicClient = createPublicClient({
