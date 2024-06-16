@@ -24,7 +24,7 @@ interface Token {
 interface PriceFeed {
   address: string;
   lastRefreshedBlock: bigint;
-  data: Array<{ price: number; timestamp: number; marketCap: number }>;
+  data: Array<{ price: number; time: number; marketCap: number }>;
 }
 
 interface Config {
