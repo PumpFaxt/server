@@ -32,8 +32,6 @@ router.post("/refresh", async (req, res) => {
         client: evm.client,
       });
 
-      console.log(await token.read.creator(), await token.read.metadata());
-
       const metadata = JSON.parse(await token.read.metadata());
 
       await Token.deleteOne({ address: token.address });
@@ -61,16 +59,12 @@ router.post("/refresh", async (req, res) => {
 
       await priceFeed.save();
       await newToken.save();
+      const updatedConfig = await Config.findOneAndUpdate(
+        {},
+        { $set: { tokensLastBlock: item.blockNumber } }
+      );
+      updatedConfig?.save();
     });
-
-    const latestBlock = await evm.getBlockNumber();
-
-    const updatedConfig = await Config.findOneAndUpdate(
-      {},
-      { $set: { tokensLastBlock: latestBlock } }
-    );
-
-    updatedConfig?.save();
 
     return res.status(200).send({ message: "Success" });
   } catch (err) {
@@ -130,24 +124,37 @@ router.get("/:address/feed", async (req, res) => {
   const { address } = req.params;
 
   if (!isAddress(address)) return res.sendStatus(400);
-  watchAllTrades(address);
 
   const feed = await PriceFeed.findOne({ address: address });
 
   if (!feed) return res.sendStatus(404);
 
-  const data: { price: number; time: number }[] = [];
+  const eventsFeed = await evm.client.getContractEvents({
+    ...contracts.token,
+    address: address,
+    eventName: "PriceChange",
+    fromBlock: feed.lastRefreshedBlock,
+    toBlock: "latest",
+  });
 
-  feed.data.forEach((f) =>
-    data.push({
-      time: Number(f.timestamp),
-      price: Number(f.price) / Number(ONE_FRAX),
-    })
+  eventsFeed.forEach(
+    async (item) =>
+      await PriceFeed.updateOne(
+        { address: address },
+        {
+          $push: {
+            data: {
+              time: Number(item.args.timestamp),
+              price: Number(item.args.price) / Number(ONE_FRAX),
+              mktCap: Number(item.args.marketCap) / Number(ONE_FRAX),
+            },
+          },
+          $set: { lastRefreshedBlock: item.blockNumber },
+        }
+      )
   );
 
-  data.sort((a, b) => a.time - b.time);
-
-  return res.status(200).send({ data: data });
+  return res.status(200).send({ data: feed.data });
 });
 
 export default router;

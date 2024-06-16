@@ -23,7 +23,7 @@ export async function watchAllTrades(address: Address) {
             { address: address },
             {
               $push: { data: { ...log.args } },
-              lastRefreshedBlock: await evm.getBlockNumber(),
+              lastRefreshedBlock: log.blockNumber,
             }
           )
       );
