@@ -3,7 +3,7 @@ import { PriceFeed } from "../types/custom";
 
 const priceFeedSchema = new Schema<PriceFeed>({
   address: { type: String, unique: true },
-  data: { type: [{ marketCap: BigInt, price: BigInt, timestamp: BigInt }] },
+  data: { type: [{ marketCap: Number, price: Number, timestamp: Number }] },
   lastRefreshedBlock: { type: BigInt },
 });
 
