@@ -144,8 +144,8 @@ router.get("/:address/feed", async (req, res) => {
         {
           $push: {
             data: {
-              time: Number(item.args.timestamp),
-              price: Number(item.args.price) / Number(ONE_FRAX),
+              time: Number(item.args.time),
+              value: Number(item.args.value) / Number(ONE_FRAX),
               mktCap: Number(item.args.marketCap) / Number(ONE_FRAX),
             },
           },
