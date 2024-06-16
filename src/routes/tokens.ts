@@ -136,7 +136,18 @@ router.get("/:address/feed", async (req, res) => {
 
   if (!feed) return res.sendStatus(404);
 
-  return res.status(200).send({ data: feed.data });
+  const data: { price: number; time: number }[] = [];
+
+  feed.data.forEach((f) =>
+    data.push({
+      time: Number(f.timestamp),
+      price: Number(f.price) / Number(ONE_FRAX),
+    })
+  );
+
+  data.sort((a, b) => a.time - b.time);
+
+  return res.status(200).send({ data: data });
 });
 
 export default router;
