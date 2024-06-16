@@ -80,6 +80,11 @@ router.post("/new-meeting", async (req, res) => {
 
   const { data } = await response.json();
   const { roomId } = data;
+
+  token.roomId = roomId;
+  await token.save();
+
+  return res.status(200).send({ message: "Success", roomId: roomId });
 });
 
 export default router;
