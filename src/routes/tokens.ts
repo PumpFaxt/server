@@ -54,7 +54,7 @@ router.post("/refresh", async (req, res) => {
       const priceFeed = await PriceFeed.create({
         address: token.address,
         lastRefreshedBlock: await evm.getBlockNumber(),
-        data: [],
+        data: [{ time: Date.now() - 1000 * 60, mktCap: 0, value: 0 }],
       });
 
       await priceFeed.save();
@@ -142,6 +142,7 @@ router.get("/:address/feed", async (req, res) => {
       await PriceFeed.updateOne(
         { address: address },
         {
+          $set: { lastRefreshedBlock: item.blockNumber + BigInt(1) },
           $push: {
             data: {
               time: Number(item.args.time),
@@ -149,7 +150,6 @@ router.get("/:address/feed", async (req, res) => {
               mktCap: Number(item.args.marketCap) / Number(ONE_FRAX),
             },
           },
-          $set: { lastRefreshedBlock: item.blockNumber },
         }
       )
   );
