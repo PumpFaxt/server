@@ -157,4 +157,17 @@ router.get("/:address/feed", async (req, res) => {
   return res.status(200).send({ data: feed.data });
 });
 
+router.get("/by-user/:address", async (req, res) => {
+  const { address } = req.params;
+
+  if (typeof address != "string" || !isAddress(address))
+    return res.sendStatus(400);
+
+  const tokens = await Token.find({ creator: req.params.address });
+
+  if (!tokens) return res.sendStatus(404);
+
+  return res.status(200).send({ tokens: tokens });
+});
+
 export default router;
