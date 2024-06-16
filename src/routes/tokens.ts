@@ -31,6 +31,8 @@ router.post("/refresh", async (req, res) => {
         client: evm.client,
       });
 
+      console.log(await token.read.creator(), await token.read.metadata());
+
       const metadata = JSON.parse(await token.read.metadata());
 
       await Token.deleteOne({ address: token.address });
