@@ -21,7 +21,10 @@ export async function watchAllTrades(address: Address) {
         async (log) =>
           await PriceFeed.updateOne(
             { address: address },
-            { $push: { data: { ...log.args } } }
+            {
+              $push: { data: { ...log.args } },
+              lastRefreshedBlock: await evm.getBlockNumber(),
+            }
           )
       );
     },
