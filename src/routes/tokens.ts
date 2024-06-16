@@ -6,6 +6,7 @@ import Token from "../models/Token";
 import { getContract, isAddress } from "viem";
 import { watchAllTrades } from "../hooks";
 import PriceFeed from "../models/PriceFeed";
+import { ONE_FRAX } from "../../config";
 const router = express.Router();
 
 router.post("/refresh", async (req, res) => {
@@ -131,9 +132,11 @@ router.get("/:address/feed", async (req, res) => {
   if (!isAddress(address)) return res.sendStatus(400);
   watchAllTrades(address);
 
-  const feed = await PriceFeed.findOneAndUpdate({ address: address });
+  const feed = await PriceFeed.findOne({ address: address });
 
-  return res.status(200).send({ data: feed });
+  if (!feed) return res.sendStatus(404);
+
+  return res.status(200).send({ data: feed.data });
 });
 
 export default router;
