@@ -1,6 +1,7 @@
 import express from "express";
-import { createToken } from "../utils";
+import { createToken, generateRandomHex } from "../utils";
 import { Role } from "@huddle01/server-sdk/auth";
+import Token from "../models/Token";
 const router = express.Router();
 
 router.get("/token", async (req, res) => {
@@ -39,6 +40,51 @@ router.get("/token", async (req, res) => {
   }
 
   return res.status(200).send({ token: token });
+});
+
+const nonceStore: Record<string, string> = {};
+router.get("/new-meeting-nonce", async (req, res) => {
+  const { tokenAddress } = req.query;
+  if (typeof tokenAddress != "string") return res.sendStatus(400);
+
+  const token = await Token.findOne({ address: tokenAddress });
+
+  if (!token) return res.sendStatus(400);
+
+  nonceStore[token.creator] =
+    "Start a new voice channel on pumpfaxt.it\nnonce: 0x" +
+    generateRandomHex(16) +
+    "\n\nThis won't trigger any transactions";
+  res.status(200).send({ nonce: nonceStore[token.creator] });
+});
+
+router.post("/new-meeting", async (req, res) => {
+  const { signature, tokenAddress } = req.query;
+  if (typeof signature != "string") return res.sendStatus(400);
+  if (typeof tokenAddress != "string") return res.sendStatus(400);
+
+  const token = await Token.findOne({ address: tokenAddress });
+  if (!token) return res.sendStatus(400);
+
+  const response = await fetch("https://api.huddle01.com/api/v1/create-room", {
+    body: JSON.stringify({
+      title: token.name,
+      hostWallets: [token.creator],
+    }),
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.HUDDLE_API_KEY ?? "",
+    },
+  });
+
+  const { data } = await response.json();
+  const { roomId } = data;
+
+  token.roomId = roomId;
+  await token.save();
+
+  return res.status(200).send({ message: "Success", roomId: roomId });
 });
 
 export default router;

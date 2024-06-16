@@ -19,6 +19,7 @@ interface Token {
   website: string;
   telegram: string;
   twitter: string;
+  roomId?: string;
 }
 
 interface PriceFeed {

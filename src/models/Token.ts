@@ -12,6 +12,7 @@ const tokenSchema = new Schema<Token>({
   website: { type: String },
   telegram: { type: String },
   twitter: { type: String },
+  roomId: { type: String },
 });
 
 tokenSchema.index({ creator: 1, symbol: 1 }, { unique: true });
