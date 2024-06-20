@@ -127,7 +127,23 @@ router.get("/:address/feed", async (req, res) => {
 
   const feed = await PriceFeed.findOne({ address: address });
 
-  if (!feed) return res.sendStatus(404);
+  if (!feed) {
+    const token = await Token.findOne({ address: address });
+    if (!token) return res.sendStatus(404);
+
+    const config = await Config.findOne({});
+
+    if (!config) return res.sendStatus(500);
+
+    const newFeed = await PriceFeed.create({
+      address: address,
+      data: [],
+      lastRefreshedBlock: config.startBlock,
+    });
+    await newFeed.save();
+
+    return res.status(200).send({ data: newFeed.data });
+  }
 
   const eventsFeed = await evm.client.getContractEvents({
     ...contracts.token,

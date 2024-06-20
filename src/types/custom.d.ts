@@ -30,4 +30,5 @@ interface PriceFeed {
 
 interface Config {
   tokensLastBlock: bigint;
+  startBlock: bigint;
 }

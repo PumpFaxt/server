@@ -7,6 +7,7 @@ export async function ensureConfig() {
     console.log("Creating new config");
     const newConfig = await Config.create({
       tokensLastBlock: ((await evm.getBlockNumber()) * BigInt(8)) / BigInt(10),
+      startBlock: ((await evm.getBlockNumber()) * BigInt(8)) / BigInt(10),
     });
     await newConfig.save();
   }
