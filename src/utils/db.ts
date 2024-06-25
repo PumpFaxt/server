@@ -9,8 +9,8 @@ export async function ensureConfig() {
   if (configExists == 0) {
     console.log("Creating new config");
     const newConfig = await Config.create({
-      tokensLastBlock: ((await evm.getBlockNumber()) * BigInt(8)) / BigInt(10),
-      startBlock: ((await evm.getBlockNumber()) * BigInt(8)) / BigInt(10),
+      tokensLastBlock: ((await evm.getBlockNumber()) * BigInt(9)) / BigInt(10),
+      startBlock: ((await evm.getBlockNumber()) * BigInt(9)) / BigInt(10),
     });
     await newConfig.save();
   }
@@ -45,6 +45,7 @@ export async function refreshTokens() {
 
       const newToken = await Token.create({
         address: token.address,
+        createdBlock: (await token.read.createdBlock()).toString(),
         creator: await token.read.creator(),
         name: await token.read.name(),
         totalSupply: Number((await token.read.totalSupply()) / evm.ONE_TOKEN),
@@ -60,19 +61,9 @@ export async function refreshTokens() {
 
       const updatedConfig = await Config.findOneAndUpdate(
         {},
-        { $set: { tokensLastBlock: item.blockNumber } }
+        { $set: { tokensLastBlock: item.blockNumber + BigInt(1) } }
       );
       updatedConfig?.save();
-
-      // await PriceFeed.deleteOne({ address: token.address });
-
-      // const priceFeed = await PriceFeed.create({
-      //   address: token.address,
-      //   lastRefreshedBlock: await evm.getBlockNumber(),
-      //   data: [{ time: Date.now() - 1000 * 60, mktCap: 0, value: 0 }],
-      // });
-
-      // await priceFeed.save();
     });
   } catch (err) {
     console.error(err);

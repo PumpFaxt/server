@@ -1,16 +1,14 @@
 import express from "express";
-import evm from "../../evm";
-import Config from "../models/Config";
-import contracts from "../../contracts";
 import Token from "../models/Token";
-import { getContract, isAddress } from "viem";
-import { watchAllTrades } from "../hooks";
-import PriceFeed from "../models/PriceFeed";
-import { ONE_FRAX } from "../../config";
+import { isAddress } from "viem";
+import { refreshTokens } from "../utils";
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
+    await refreshTokens();
+
     const page =
       (typeof req.query.page == "string" && parseInt(req.query.page)) || 1;
     const limit =
@@ -29,7 +27,7 @@ router.get("/", async (req, res) => {
 
     response.tokens = await Token.find(
       {},
-      {},
+      { replies: false },
       { limit: limit, skip: startIndex }
     );
     res.status(200).send(response);
@@ -49,6 +47,35 @@ router.get("/:address", async (req, res) => {
     if (!token) return res.sendStatus(404);
 
     return res.status(200).send({ token: token });
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+});
+
+router.post("/:address/reply", async (req, res) => {
+  try {
+    const { reply } = req.body;
+    if (typeof reply != "string") return res.sendStatus(400);
+
+    const { address } = req.params;
+    if (typeof address != "string") return res.sendStatus(400);
+
+    const replyData = JSON.parse(reply);
+
+    if (!replyData.author || !replyData.content) return res.sendStatus(400);
+
+    const token = await Token.findOneAndUpdate(
+      { address: address },
+      {
+        $push: {
+          replies: JSON.stringify({ ...replyData, timestamp: Date.now() }),
+        },
+      }
+    );
+    await token?.save();
+
+    return res.status(200).send({ message: "Success" });
   } catch (err) {
     console.error(err);
     res.sendStatus(500);

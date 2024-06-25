@@ -11,6 +11,7 @@ interface User {
 interface Token {
   address: string;
   creator: string;
+  createdBlock: string;
   name: string;
   symbol: string;
   totalSupply: number;
@@ -20,12 +21,7 @@ interface Token {
   telegram: string;
   twitter: string;
   roomId?: string;
-}
-
-interface PriceFeed {
-  address: string;
-  lastRefreshedBlock: bigint;
-  data: Array<{ value: number; time: number; marketCap: number }>;
+  replies: string[];
 }
 
 interface Config {
