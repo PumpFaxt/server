@@ -108,4 +108,28 @@ router.get("/by-user/:address", async (req, res) => {
   return res.status(200).send({ tokens: tokens });
 });
 
+router.get("/random/address", async (req, res) => {
+  try {
+    const total = await Token.countDocuments();
+    const randomIndex = Math.floor(Math.random() * total);
+
+    const randomToken = await Token.findOne(
+      {},
+      { address: true },
+      { limit: 1, skip: randomIndex }
+    );
+
+    if (!randomToken) {
+      return res
+        .status(404)
+        .send({ message: "No token found at radom index" });
+    }
+
+    return res.status(200).send({ token: randomToken });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
 export default router;
