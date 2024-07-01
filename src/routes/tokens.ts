@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
       (typeof req.query.page == "string" && parseInt(req.query.page)) || 1;
     const limit =
       (typeof req.query.limit == "string" && parseInt(req.query.limit)) || 10;
+    const query = req.query.q as string;
 
     const startIndex = (page - 1) * limit;
 
@@ -21,12 +22,24 @@ router.get("/", async (req, res) => {
       tokens: [],
     };
 
-    const total = await Token.countDocuments();
+    let tokenQuery = {};
+
+    if (query) {
+      tokenQuery = {
+        $or: [
+          { name: new RegExp(query, "i") },
+          { symbol: new RegExp(query, "i") },
+          { description: new RegExp(query, "i") },
+        ],
+      };
+    }
+
+    const total = await Token.countDocuments(tokenQuery);
 
     response.total = total;
 
     response.tokens = await Token.find(
-      {},
+      tokenQuery,
       { replies: false },
       { limit: limit, skip: startIndex }
     );
@@ -103,6 +116,30 @@ router.get("/by-user/:address", async (req, res) => {
   if (!tokens) return res.sendStatus(404);
 
   return res.status(200).send({ tokens: tokens });
+});
+
+router.get("/random/address", async (req, res) => {
+  try {
+    const total = await Token.countDocuments();
+    const randomIndex = Math.floor(Math.random() * total);
+
+    const randomToken = await Token.findOne(
+      {},
+      { address: true },
+      { limit: 1, skip: randomIndex }
+    );
+
+    if (!randomToken) {
+      return res
+        .status(404)
+        .send({ message: "No token found at radom index" });
+    }
+
+    return res.status(200).send({ token: randomToken });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
 });
 
 export default router;
