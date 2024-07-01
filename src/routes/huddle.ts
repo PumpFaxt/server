@@ -52,7 +52,7 @@ router.get("/new-meeting-nonce", async (req, res) => {
   if (!token) return res.sendStatus(400);
 
   nonceStore[token.creator] =
-    "Start a new voice channel on pumpfaxt.it\nnonce: 0x" +
+    "Start a new voice channel on PumpFaxt (Pump it fast)\nnonce: 0x" +
     generateRandomHex(16) +
     "\n\nThis won't trigger any transactions";
   res.status(200).send({ nonce: nonceStore[token.creator] });
