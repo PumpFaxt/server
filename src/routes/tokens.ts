@@ -1,6 +1,6 @@
 import express from "express";
 import Token from "../models/Token";
-import { isAddress } from "viem";
+import { isAddress, recoverAddress, recoverMessageAddress } from "viem";
 import { refreshTokens } from "../utils";
 
 const router = express.Router();
@@ -58,12 +58,22 @@ router.post("/:address/reply", async (req, res) => {
     const { reply } = req.body;
     if (typeof reply != "string") return res.sendStatus(400);
 
+    const { signature } = req.body;
+    if (typeof signature != "string") return res.sendStatus(400);
+
     const { address } = req.params;
     if (typeof address != "string") return res.sendStatus(400);
+
+    const recoveredAddress = await recoverMessageAddress({
+      message: reply,
+      signature: signature as "0x",
+    });
 
     const replyData = JSON.parse(reply);
 
     if (!replyData.author || !replyData.content) return res.sendStatus(400);
+
+    if (recoveredAddress != replyData.author) return res.sendStatus(401);
 
     const token = await Token.findOneAndUpdate(
       { address: address },
