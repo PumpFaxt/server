@@ -121,6 +121,9 @@ router.get("/by-user/:address", async (req, res) => {
 router.get("/random/address", async (req, res) => {
   try {
     const total = await Token.countDocuments();
+
+    if (total == 0) return res.sendStatus(404);
+
     const randomIndex = Math.floor(Math.random() * total);
 
     const randomToken = await Token.findOne(
