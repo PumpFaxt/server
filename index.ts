@@ -26,7 +26,7 @@ async function main() {
     console.log(`server listening on port ${PORT}`);
   });
 
-  await ensureConfig();
+  // await ensureConfig();
 }
 
 main();
