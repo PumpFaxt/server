@@ -22,11 +22,11 @@ async function main() {
   if (!process.env.MONGODB_URI) throw new Error("Connection URI missing");
   await mongoose.connect(process.env.MONGODB_URI);
 
-  await ensureConfig();
-
   app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
   });
+
+  await ensureConfig();
 }
 
 main();
