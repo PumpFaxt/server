@@ -8,7 +8,7 @@ import indexRouter from "./src/routes/_index";
 import { frontendUrl } from "./config";
 import { ensureConfig } from "./src/utils";
 
-const PORT = Number(process.env.PORT) || 4000;
+const PORT = Number(process.env.PORT) || 9000;
 
 const app = express();
 
