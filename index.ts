@@ -1,11 +1,10 @@
 import "dotenv/config";
 
-import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import indexRouter from "./src/routes/_index";
 
-import { frontendUrl } from "./config";
 import { ensureConfig } from "./src/utils";
 
 const PORT = Number(process.env.PORT) || 9000;
