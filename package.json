@@ -15,6 +15,7 @@
     "express": "^4.19.2",
     "gun": "^0.2020.1240",
     "mongoose": "^8.4.1",
+    "ts-node": "^10.9.2",
     "viem": "^2.13.10"
   },
   "devDependencies": {
