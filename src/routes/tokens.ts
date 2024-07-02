@@ -1,6 +1,6 @@
 import express from "express";
 import Token from "../models/Token";
-import { isAddress, recoverAddress, recoverMessageAddress } from "viem";
+import { isAddress, recoverMessageAddress } from "viem";
 import { refreshTokens } from "../utils";
 
 const router = express.Router();
@@ -133,9 +133,7 @@ router.get("/random/address", async (req, res) => {
     );
 
     if (!randomToken) {
-      return res
-        .status(404)
-        .send({ message: "No token found at radom index" });
+      return res.status(404).send({ message: "No token found at radom index" });
     }
 
     return res.status(200).send({ token: randomToken });
