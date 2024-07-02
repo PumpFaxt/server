@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.2.1",
-    "nodemon": "^7.5.2",
+    "nodemon": "^3.1.4",
     "typescript": "^5.4.5"
   }
 }
