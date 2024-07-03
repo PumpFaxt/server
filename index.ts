@@ -18,9 +18,11 @@ app.use(express.urlencoded());
 app.use("/", indexRouter);
 
 async function main() {
+  console.log("Attempting Boot");
   if (!process.env.MONGODB_URI) throw new Error("Connection URI missing");
 
   await mongoose.connect(process.env.MONGODB_URI);
+  console.log("Database Connection established");
 
   await ensureConfig();
 
