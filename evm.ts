@@ -10,7 +10,7 @@ import {
 } from "viem";
 import { fraxtal } from "viem/chains";
 
-const rpcUrl = "https://rpc.testnet.frax.com/";
+const rpcUrl = "https://rpc.frax.com/";
 const pvtKey = crypto.randomBytes(32).toString("hex");
 
 const publicClient = createPublicClient({
