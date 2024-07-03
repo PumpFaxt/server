@@ -17,6 +17,4 @@ const tokenSchema = new Schema<Token>({
   replies: { type: [String] },
 });
 
-tokenSchema.index({ creator: 1, symbol: 1 }, { unique: true });
-
 export default model<Token>("Token", tokenSchema);
