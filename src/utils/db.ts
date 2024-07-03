@@ -29,6 +29,8 @@ export async function refreshTokens() {
       toBlock: "latest",
     });
 
+    console.log(tokens);
+
     tokens.forEach(async (item) => {
       const tokenAddress = item.args.token;
 
