@@ -4,7 +4,6 @@ interface User {
   address: string;
   nickname: string;
   image: string;
-  queue: Partial<Token>[];
   lastTokensBlock: number;
 }
 
