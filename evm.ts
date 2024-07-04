@@ -8,18 +8,20 @@ import {
   http,
   publicActions,
 } from "viem";
-import { fraxtal } from "viem/chains";
+import { fraxtal, fraxtalTestnet } from "viem/chains";
 
-const rpcUrl = "https://rpc.frax.com/";
+const primaryChain = fraxtalTestnet;
+
+const rpcUrl = primaryChain.rpcUrls.default.http[0];
 const pvtKey = crypto.randomBytes(32).toString("hex");
 
 const publicClient = createPublicClient({
-  chain: fraxtal,
+  chain: primaryChain,
   transport: http(rpcUrl),
 });
 
 const client = createWalletClient({
-  chain: fraxtal,
+  chain: primaryChain,
   transport: http(rpcUrl),
   key: pvtKey,
 }).extend(publicActions);
