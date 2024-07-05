@@ -15,7 +15,7 @@ router.get("/check-eth", async (req, res) => {
   if (bal >= BigInt(10 * Math.pow(10, 18)))
     return res.send({
       claimable: false,
-      message: "You already have more than a frxETH",
+      message: "You already have more than one frxETH",
     });
 
   if (
@@ -23,7 +23,7 @@ router.get("/check-eth", async (req, res) => {
   ) {
     const cooldown = await faucet.contract.read.ethClaimCooldown();
     return res.send({
-      claim: false,
+      claimable: false,
       message: `You can only claim once every ${
         (Number(cooldown) / 60) * 60 * 1000
       }hrs`,
@@ -59,7 +59,7 @@ router.get("/check-frax", async (req, res) => {
   ) {
     const cooldown = await faucet.contract.read.fraxClaimCooldown();
     return res.send({
-      claim: false,
+      claimable: false,
       message: `You can only claim once every ${
         (Number(cooldown) / 60) * 60 * 1000
       }hrs`,
@@ -106,8 +106,8 @@ router.get("/config", async (req, res) => {
       await faucet.contract.read.fraxClaimAmount()
     );
   }
-  if (faucetConfig.frax.amount === 0) {
-    faucetConfig.frax.amount = Number(
+  if (faucetConfig.frax.cooldown === 0) {
+    faucetConfig.frax.cooldown = Number(
       await faucet.contract.read.fraxClaimCooldown()
     );
   }
