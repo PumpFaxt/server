@@ -86,4 +86,33 @@ router.get("/claim-frax", async (req, res) => {
   res.sendStatus(200);
 });
 
+let faucetConfig = {
+  eth: { cooldown: 0, amount: 0 },
+  frax: { cooldown: 0, amount: 0 },
+};
+router.get("/config", async (req, res) => {
+  if (faucetConfig.eth.amount === 0) {
+    faucetConfig.eth.amount = Number(
+      await faucet.contract.read.ethClaimAmount()
+    );
+  }
+  if (faucetConfig.eth.cooldown === 0) {
+    faucetConfig.eth.cooldown = Number(
+      await faucet.contract.read.ethClaimCooldown()
+    );
+  }
+  if (faucetConfig.frax.amount === 0) {
+    faucetConfig.frax.amount = Number(
+      await faucet.contract.read.fraxClaimAmount()
+    );
+  }
+  if (faucetConfig.frax.amount === 0) {
+    faucetConfig.frax.amount = Number(
+      await faucet.contract.read.fraxClaimCooldown()
+    );
+  }
+
+  return res.send(faucetConfig);
+});
+
 export default router;
