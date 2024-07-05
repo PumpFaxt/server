@@ -14,6 +14,7 @@ const tokenSchema = new Schema<Token>({
   telegram: { type: String },
   twitter: { type: String },
   roomId: { type: String },
+  roomIdExpiration: { type: Number },
   replies: { type: [String] },
 });
 

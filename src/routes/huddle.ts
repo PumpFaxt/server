@@ -2,6 +2,7 @@ import express from "express";
 import { createToken, generateRandomHex } from "../utils";
 import { Role } from "@huddle01/server-sdk/auth";
 import Token from "../models/Token";
+import { recoverMessageAddress } from "viem";
 const router = express.Router();
 
 router.get("/token", async (req, res) => {
@@ -51,6 +52,15 @@ router.get("/new-meeting-nonce", async (req, res) => {
 
   if (!token) return res.sendStatus(400);
 
+  if (token.roomId) {
+    token.roomId = undefined;
+  }
+  if (token.roomIdExpiration) {
+    token.roomIdExpiration = undefined;
+  }
+
+  await token.save();
+
   nonceStore[token.creator] =
     "Start a new voice channel on PumpFaxt (Pump it fast)\nnonce: 0x" +
     generateRandomHex(16) +
@@ -66,6 +76,13 @@ router.post("/new-meeting", async (req, res) => {
   const token = await Token.findOne({ address: tokenAddress });
   if (!token) return res.sendStatus(400);
 
+  const recoveredAddress = await recoverMessageAddress({
+    message: nonceStore[token.creator],
+    signature: signature as "0x",
+  });
+
+  if (recoveredAddress != token.creator) return res.sendStatus(403);
+
   const response = await fetch("https://api.huddle01.com/api/v1/create-room", {
     body: JSON.stringify({
       title: token.name,
@@ -80,6 +97,9 @@ router.post("/new-meeting", async (req, res) => {
 
   const { data } = await response.json();
   const { roomId } = data;
+
+  token.roomId = roomId;
+  token.roomIdExpiration = Date.now() + 30 * 60 * 1000;
 
   await token.save();
 

@@ -20,6 +20,7 @@ interface Token {
   telegram: string;
   twitter: string;
   roomId?: string;
+  roomIdExpiration?: number;
   replies: string[];
 }
 
