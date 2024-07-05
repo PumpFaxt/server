@@ -41,7 +41,7 @@ router.get("/", async (req, res) => {
     response.tokens = await Token.find(
       tokenQuery,
       { replies: false },
-      { limit: limit, skip: startIndex }
+      { limit: limit, skip: startIndex, sort: { createdBlock: -1 } }
     );
     res.status(200).send(response);
   } catch (err) {
@@ -143,4 +143,9 @@ router.get("/random/address", async (req, res) => {
   }
 });
 
+router.get("/trending/og", async (req, res) => {
+  const trending = await Token.find({}, {}, { limit: 5, sort: "createdBlock" });
+
+  return res.send(trending);
+});
 export default router;
