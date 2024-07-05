@@ -24,9 +24,7 @@ router.get("/check-eth", async (req, res) => {
     const cooldown = await faucet.contract.read.ethClaimCooldown();
     return res.send({
       claimable: false,
-      message: `You can only claim once every ${
-        (Number(cooldown) / 60) * 60 * 1000
-      }hrs`,
+      message: `You can only claim once every ${Number(cooldown) / 3600}hrs`,
     });
   }
 
@@ -67,9 +65,7 @@ router.get("/check-frax", async (req, res) => {
     const cooldown = await faucet.contract.read.fraxClaimCooldown();
     return res.send({
       claimable: false,
-      message: `You can only claim once every ${
-        (Number(cooldown) / 60) * 60 * 1000
-      }hrs`,
+      message: `You can only claim once every ${Number(cooldown) / 3600}hrs`,
     });
   }
 
