@@ -1,6 +1,7 @@
 import contracts from "./contracts";
 
 import { createWalletClient, getContract, http, publicActions } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { fraxtalTestnet } from "viem/chains";
 
 const primaryChain = fraxtalTestnet;
@@ -10,7 +11,7 @@ const client = createWalletClient({
   chain: primaryChain,
   transport: http(rpcUrl),
   key: process.env.PVT_KEY,
-  account: process.env.PUB_KEY as "0x",
+  account: privateKeyToAccount(`0x${process.env.PVT_KEY}`),
 }).extend(publicActions);
 
 const faucet = getContract({

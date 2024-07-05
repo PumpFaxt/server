@@ -50,6 +50,7 @@ router.get("/claim-eth", async (req, res) => {
     });
     res.sendStatus(200);
   } catch (err) {
+    console.log(err);
     res.sendStatus(500);
   }
 });
@@ -89,9 +90,11 @@ router.get("/claim-frax", async (req, res) => {
 
     await faucet.contract.write.claimFrax([address], {
       account: faucet.account,
+      gas: 3000000n,
     });
     res.sendStatus(200);
   } catch (err) {
+    console.log(err);
     res.sendStatus(500);
   }
 });
