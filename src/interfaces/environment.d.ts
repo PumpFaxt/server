@@ -7,6 +7,8 @@ declare global {
       MONGODB_URI: string;
       ACCESS_TOKEN_SECRET: string;
       HUDDLE_API_KEY: string;
+      PVT_KEY: string;
+      PUB_KEY: string;
     }
   }
 }
