@@ -85,6 +85,7 @@ router.post("/:address/reply", async (req, res) => {
     const replyData = JSON.parse(reply);
 
     if (!replyData.author || !replyData.content) return res.sendStatus(400);
+    if (replyData.content.length > 500) return res.sendStatus(400);
 
     if (recoveredAddress != replyData.author) return res.sendStatus(401);
 
