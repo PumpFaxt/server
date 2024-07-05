@@ -34,18 +34,24 @@ router.get("/check-eth", async (req, res) => {
 });
 
 router.get("/claim-eth", async (req, res) => {
-  const { address } = req.query;
+  try {
+    const { address } = req.query;
 
-  if (typeof address != "string" || !isAddress(address))
-    return res.sendStatus(400);
+    if (typeof address != "string" || !isAddress(address))
+      return res.sendStatus(400);
 
-  if ((await faucet.contract.read.checkEthClaimEligibility([address])) == false)
-    return res.sendStatus(401);
+    if (
+      (await faucet.contract.read.checkEthClaimEligibility([address])) == false
+    )
+      return res.sendStatus(401);
 
-  await faucet.contract.write.claimEth([address], {
-    account: faucet.account,
-  });
-  res.sendStatus(200);
+    await faucet.contract.write.claimEth([address], {
+      account: faucet.account,
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
 router.get("/check-frax", async (req, res) => {
@@ -70,20 +76,24 @@ router.get("/check-frax", async (req, res) => {
 });
 
 router.get("/claim-frax", async (req, res) => {
-  const { address } = req.query;
+  try {
+    const { address } = req.query;
 
-  if (typeof address != "string" || !isAddress(address))
-    return res.sendStatus(400);
+    if (typeof address != "string" || !isAddress(address))
+      return res.sendStatus(400);
 
-  if (
-    (await faucet.contract.read.checkFraxClaimEligibility([address])) == false
-  )
-    return res.sendStatus(401);
+    if (
+      (await faucet.contract.read.checkFraxClaimEligibility([address])) == false
+    )
+      return res.sendStatus(401);
 
-  await faucet.contract.write.claimFrax([address], {
-    account: faucet.account,
-  });
-  res.sendStatus(200);
+    await faucet.contract.write.claimFrax([address], {
+      account: faucet.account,
+    });
+    res.sendStatus(200);
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
 
 let faucetConfig = {
